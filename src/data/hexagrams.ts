@@ -1,0 +1,663 @@
+// 易经64卦数据
+export interface Hexagram {
+  number: number
+  name: string
+  upperTrigram: string // 上卦
+  lowerTrigram: string // 下卦
+  binary: string // 二进制表示（阳爻1，阴爻0）
+  description: string
+  judgment: string // 卦辞
+  image: string // 象辞
+}
+
+// 64卦数据（完整版）
+export const hexagrams: Hexagram[] = [
+  {
+    number: 1,
+    name: '乾为天',
+    upperTrigram: '乾',
+    lowerTrigram: '乾',
+    binary: '111111',
+    description: '刚健中正，自强不息',
+    judgment: '元亨利贞。象曰：天行健，君子以自强不息。',
+    image: '乾卦代表天，纯阳之卦，刚健有力。'
+  },
+  {
+    number: 2,
+    name: '坤为地',
+    upperTrigram: '坤',
+    lowerTrigram: '坤',
+    binary: '000000',
+    description: '柔顺利贞，厚德载物',
+    judgment: '元亨，利牝马之贞。象曰：地势坤，君子以厚德载物。',
+    image: '坤卦代表地，纯阴之卦，柔顺承载。'
+  },
+  {
+    number: 3,
+    name: '水雷屯',
+    upperTrigram: '坎',
+    lowerTrigram: '震',
+    binary: '010001',
+    description: '万物始生，艰难险阻',
+    judgment: '元亨利贞，勿用有攸往，利建侯。',
+    image: '屯卦表示万物初生，处于艰难时期，需要坚守。'
+  },
+  {
+    number: 4,
+    name: '山水蒙',
+    upperTrigram: '艮',
+    lowerTrigram: '坎',
+    binary: '100010',
+    description: '启蒙教育，童蒙求我',
+    judgment: '亨。匪我求童蒙，童蒙求我。',
+    image: '蒙卦代表蒙昧无知，需要启蒙教育。'
+  },
+  {
+    number: 5,
+    name: '水天需',
+    upperTrigram: '坎',
+    lowerTrigram: '乾',
+    binary: '010111',
+    description: '等待时机，养精蓄锐',
+    judgment: '有孚，光亨，贞吉。利涉大川。',
+    image: '需卦表示等待，需要耐心等候时机成熟。'
+  },
+  {
+    number: 6,
+    name: '天水讼',
+    upperTrigram: '乾',
+    lowerTrigram: '坎',
+    binary: '111010',
+    description: '争讼诉讼，慎重行事',
+    judgment: '有孚，窒惕，中吉，终凶。利见大人，不利涉大川。',
+    image: '讼卦代表争讼，提醒避免争端。'
+  },
+  {
+    number: 7,
+    name: '地水师',
+    upperTrigram: '坤',
+    lowerTrigram: '坎',
+    binary: '000010',
+    description: '统率军队，以正治国',
+    judgment: '贞，丈人吉，无咎。',
+    image: '师卦代表军队，强调纪律和正义。'
+  },
+  {
+    number: 8,
+    name: '水地比',
+    upperTrigram: '坎',
+    lowerTrigram: '坤',
+    binary: '010000',
+    description: '亲密团结，相互辅助',
+    judgment: '吉。原筮，元永贞，无咎。',
+    image: '比卦代表亲比，强调团结合作。'
+  },
+  {
+    number: 9,
+    name: '风天小畜',
+    upperTrigram: '巽',
+    lowerTrigram: '乾',
+    binary: '110111',
+    description: '小有积蓄，密云不雨',
+    judgment: '亨。密云不雨，自我西郊。',
+    image: '小畜卦表示小有积蓄，需要等待。'
+  },
+  {
+    number: 10,
+    name: '天泽履',
+    upperTrigram: '乾',
+    lowerTrigram: '兑',
+    binary: '111011',
+    description: '如履薄冰，谨慎前行',
+    judgment: '履虎尾，不咥人，亨。',
+    image: '履卦表示行走，需要小心谨慎。'
+  },
+  {
+    number: 11,
+    name: '地天泰',
+    upperTrigram: '坤',
+    lowerTrigram: '乾',
+    binary: '000111',
+    description: '天地交泰，国泰民安',
+    judgment: '小往大来，吉亨。',
+    image: '泰卦代表通泰，吉祥顺利。'
+  },
+  {
+    number: 12,
+    name: '天地否',
+    upperTrigram: '乾',
+    lowerTrigram: '坤',
+    binary: '111000',
+    description: '天地不交，闭塞不通',
+    judgment: '否之匪人，不利君子贞，大往小来。',
+    image: '否卦代表闭塞，需要谨慎应对。'
+  },
+  {
+    number: 13,
+    name: '天火同人',
+    upperTrigram: '乾',
+    lowerTrigram: '离',
+    binary: '111101',
+    description: '志同道合，和衷共济',
+    judgment: '同人于野，亨。利涉大川，利君子贞。',
+    image: '同人卦表示团结，强调和谐合作。'
+  },
+  {
+    number: 14,
+    name: '火天大有',
+    upperTrigram: '离',
+    lowerTrigram: '乾',
+    binary: '101111',
+    description: '大有收获，繁荣昌盛',
+    judgment: '元亨。',
+    image: '大有卦代表丰收，事业兴旺。'
+  },
+  {
+    number: 15,
+    name: '地山谦',
+    upperTrigram: '坤',
+    lowerTrigram: '艮',
+    binary: '000100',
+    description: '谦虚谨慎，吉祥如意',
+    judgment: '亨，君子有终。',
+    image: '谦卦表示谦逊，美德之卦。'
+  },
+  {
+    number: 16,
+    name: '雷地豫',
+    upperTrigram: '震',
+    lowerTrigram: '坤',
+    binary: '001000',
+    description: '顺势而为，欢乐喜悦',
+    judgment: '利建侯行师。',
+    image: '豫卦代表愉悦，顺应天时。'
+  },
+  {
+    number: 17,
+    name: '泽雷随',
+    upperTrigram: '兑',
+    lowerTrigram: '震',
+    binary: '011001',
+    description: '随机应变，顺应时势',
+    judgment: '元亨利贞，无咎。',
+    image: '随卦表示跟随，顺应形势。'
+  },
+  {
+    number: 18,
+    name: '山风蛊',
+    upperTrigram: '艮',
+    lowerTrigram: '巽',
+    binary: '100110',
+    description: '拨乱反正，整顿革新',
+    judgment: '元亨，利涉大川。先甲三日，后甲三日。',
+    image: '蛊卦代表整治，需要改革。'
+  },
+  {
+    number: 19,
+    name: '地泽临',
+    upperTrigram: '坤',
+    lowerTrigram: '兑',
+    binary: '000011',
+    description: '居高临下，刚正不阿',
+    judgment: '元亨利贞。至于八月有凶。',
+    image: '临卦表示临近，把握时机。'
+  },
+  {
+    number: 20,
+    name: '风地观',
+    upperTrigram: '巽',
+    lowerTrigram: '坤',
+    binary: '110000',
+    description: '观察审视，以德服人',
+    judgment: '盥而不荐，有孚颙若。',
+    image: '观卦代表观察，需要深思熟虑。'
+  },
+  {
+    number: 21,
+    name: '火雷噬嗑',
+    upperTrigram: '离',
+    lowerTrigram: '震',
+    binary: '101001',
+    description: '排除障碍，刑罚明断',
+    judgment: '亨。利用狱。',
+    image: '噬嗑卦表示咬合，需要果断处理。'
+  },
+  {
+    number: 22,
+    name: '山火贲',
+    upperTrigram: '艮',
+    lowerTrigram: '离',
+    binary: '100101',
+    description: '文饰修养，内外兼修',
+    judgment: '亨。小利有攸往。',
+    image: '贲卦代表装饰，注重修养。'
+  },
+  {
+    number: 23,
+    name: '山地剥',
+    upperTrigram: '艮',
+    lowerTrigram: '坤',
+    binary: '100000',
+    description: '剥落衰败，顺应天时',
+    judgment: '不利有攸往。',
+    image: '剥卦表示剥落，需要谨慎守成。'
+  },
+  {
+    number: 24,
+    name: '地雷复',
+    upperTrigram: '坤',
+    lowerTrigram: '震',
+    binary: '000001',
+    description: '复兴再生，周而复始',
+    judgment: '亨。出入无疾，朋来无咎。反复其道，七日来复。',
+    image: '复卦代表回复，事物复苏。'
+  },
+  {
+    number: 25,
+    name: '天雷无妄',
+    upperTrigram: '乾',
+    lowerTrigram: '震',
+    binary: '111001',
+    description: '顺应自然，无妄而得',
+    judgment: '元亨利贞。其匪正有眚，不利有攸往。',
+    image: '无妄卦表示真诚，不可妄为。'
+  },
+  {
+    number: 26,
+    name: '山天大畜',
+    upperTrigram: '艮',
+    lowerTrigram: '乾',
+    binary: '100111',
+    description: '积蓄力量，厚积薄发',
+    judgment: '利贞。不家食吉，利涉大川。',
+    image: '大畜卦代表积蓄，储备实力。'
+  },
+  {
+    number: 27,
+    name: '山雷颐',
+    upperTrigram: '艮',
+    lowerTrigram: '震',
+    binary: '100001',
+    description: '养生修身，谨言慎行',
+    judgment: '贞吉。观颐，自求口实。',
+    image: '颐卦表示颐养，注重修养。'
+  },
+  {
+    number: 28,
+    name: '泽风大过',
+    upperTrigram: '兑',
+    lowerTrigram: '巽',
+    binary: '011110',
+    description: '大过之时，非常之举',
+    judgment: '栋桡。利有攸往，亨。',
+    image: '大过卦代表过度，需要特殊应对。'
+  },
+  {
+    number: 29,
+    name: '坎为水',
+    upperTrigram: '坎',
+    lowerTrigram: '坎',
+    binary: '010010',
+    description: '险难重重，诚信可守',
+    judgment: '有孚，维心亨，行有尚。',
+    image: '坎卦代表险难，需要坚守信念。'
+  },
+  {
+    number: 30,
+    name: '离为火',
+    upperTrigram: '离',
+    lowerTrigram: '离',
+    binary: '101101',
+    description: '光明磊落，依附正道',
+    judgment: '利贞，亨。畜牝牛，吉。',
+    image: '离卦代表光明，需要依附正道。'
+  },
+  {
+    number: 31,
+    name: '泽山咸',
+    upperTrigram: '兑',
+    lowerTrigram: '艮',
+    binary: '011100',
+    description: '感应相通，男女相悦',
+    judgment: '亨，利贞。取女吉。',
+    image: '咸卦表示感应，男女和合。'
+  },
+  {
+    number: 32,
+    name: '雷风恒',
+    upperTrigram: '震',
+    lowerTrigram: '巽',
+    binary: '001110',
+    description: '恒久坚守，持之以恒',
+    judgment: '亨，无咎，利贞。利有攸往。',
+    image: '恒卦代表恒久，需要坚持。'
+  },
+  {
+    number: 33,
+    name: '天山遁',
+    upperTrigram: '乾',
+    lowerTrigram: '艮',
+    binary: '111100',
+    description: '退隐避让，保全实力',
+    judgment: '亨。小利贞。',
+    image: '遁卦表示退避，智慧的选择。'
+  },
+  {
+    number: 34,
+    name: '雷天大壮',
+    upperTrigram: '震',
+    lowerTrigram: '乾',
+    binary: '001111',
+    description: '刚强壮大，勇猛精进',
+    judgment: '利贞。',
+    image: '大壮卦代表强壮，需要正道而行。'
+  },
+  {
+    number: 35,
+    name: '火地晋',
+    upperTrigram: '离',
+    lowerTrigram: '坤',
+    binary: '101000',
+    description: '晋升进取，光明上进',
+    judgment: '康侯用锡马蕃庶，昼日三接。',
+    image: '晋卦表示晋升，前途光明。'
+  },
+  {
+    number: 36,
+    name: '地火明夷',
+    upperTrigram: '坤',
+    lowerTrigram: '离',
+    binary: '000101',
+    description: '光明受伤，韬光养晦',
+    judgment: '利艰贞。',
+    image: '明夷卦代表光明受损，需要隐忍。'
+  },
+  {
+    number: 37,
+    name: '风火家人',
+    upperTrigram: '巽',
+    lowerTrigram: '离',
+    binary: '110101',
+    description: '家庭和睦，各司其职',
+    judgment: '利女贞。',
+    image: '家人卦表示家庭，强调和谐。'
+  },
+  {
+    number: 38,
+    name: '火泽睽',
+    upperTrigram: '离',
+    lowerTrigram: '兑',
+    binary: '101011',
+    description: '乖离相违，求同存异',
+    judgment: '小事吉。',
+    image: '睽卦代表乖离，需要化解分歧。'
+  },
+  {
+    number: 39,
+    name: '水山蹇',
+    upperTrigram: '坎',
+    lowerTrigram: '艮',
+    binary: '010100',
+    description: '艰难险阻，反求诸己',
+    judgment: '利西南，不利东北。利见大人，贞吉。',
+    image: '蹇卦表示艰难，需要反省自己。'
+  },
+  {
+    number: 40,
+    name: '雷水解',
+    upperTrigram: '震',
+    lowerTrigram: '坎',
+    binary: '001010',
+    description: '解除困难，宽恕释怀',
+    judgment: '利西南。无所往，其来复吉。有攸往，夙吉。',
+    image: '解卦代表解脱，困难化解。'
+  },
+  {
+    number: 41,
+    name: '山泽损',
+    upperTrigram: '艮',
+    lowerTrigram: '兑',
+    binary: '100011',
+    description: '减损抑制，损己益人',
+    judgment: '有孚，元吉，无咎，可贞。利有攸往。',
+    image: '损卦表示减损，需要取舍。'
+  },
+  {
+    number: 42,
+    name: '风雷益',
+    upperTrigram: '巽',
+    lowerTrigram: '震',
+    binary: '110001',
+    description: '增益进取，利益众人',
+    judgment: '利有攸往，利涉大川。',
+    image: '益卦代表增益，互利共赢。'
+  },
+  {
+    number: 43,
+    name: '泽天夬',
+    upperTrigram: '兑',
+    lowerTrigram: '乾',
+    binary: '011111',
+    description: '决断果断，刚决柔邪',
+    judgment: '扬于王庭，孚号有厉。告自邑，不利即戎。',
+    image: '夬卦表示决断，需要果断行事。'
+  },
+  {
+    number: 44,
+    name: '天风姤',
+    upperTrigram: '乾',
+    lowerTrigram: '巽',
+    binary: '111110',
+    description: '不期而遇，柔遇刚强',
+    judgment: '女壮，勿用取女。',
+    image: '姤卦代表相遇，需要谨慎对待。'
+  },
+  {
+    number: 45,
+    name: '泽地萃',
+    upperTrigram: '兑',
+    lowerTrigram: '坤',
+    binary: '011000',
+    description: '聚集汇萃，团结一致',
+    judgment: '亨。王假有庙，利见大人，亨，利贞。',
+    image: '萃卦表示聚集，众人团结。'
+  },
+  {
+    number: 46,
+    name: '地风升',
+    upperTrigram: '坤',
+    lowerTrigram: '巽',
+    binary: '000110',
+    description: '上升发展，循序渐进',
+    judgment: '元亨。用见大人，勿恤。南征吉。',
+    image: '升卦代表上升，稳步发展。'
+  },
+  {
+    number: 47,
+    name: '泽水困',
+    upperTrigram: '兑',
+    lowerTrigram: '坎',
+    binary: '011010',
+    description: '困境艰难，坚守正道',
+    judgment: '亨，贞。大人吉，无咎。有言不信。',
+    image: '困卦表示困境，需要坚守。'
+  },
+  {
+    number: 48,
+    name: '水风井',
+    upperTrigram: '坎',
+    lowerTrigram: '巽',
+    binary: '010110',
+    description: '井养不穷，滋养万物',
+    judgment: '改邑不改井，无丧无得，往来井井。',
+    image: '井卦代表水井，恒久不变。'
+  },
+  {
+    number: 49,
+    name: '泽火革',
+    upperTrigram: '兑',
+    lowerTrigram: '离',
+    binary: '011101',
+    description: '变革改革，顺应天命',
+    judgment: '巳日乃孚。元亨利贞，悔亡。',
+    image: '革卦表示变革，顺应时代。'
+  },
+  {
+    number: 50,
+    name: '火风鼎',
+    upperTrigram: '离',
+    lowerTrigram: '巽',
+    binary: '101110',
+    description: '鼎新革故，稳固根基',
+    judgment: '元吉，亨。',
+    image: '鼎卦代表鼎器，稳固发展。'
+  },
+  {
+    number: 51,
+    name: '震为雷',
+    upperTrigram: '震',
+    lowerTrigram: '震',
+    binary: '001001',
+    description: '震动奋起，反省修德',
+    judgment: '亨。震来虩虩，笑言哑哑。震惊百里，不丧匕鬯。',
+    image: '震卦代表震动，警醒反省。'
+  },
+  {
+    number: 52,
+    name: '艮为山',
+    upperTrigram: '艮',
+    lowerTrigram: '艮',
+    binary: '100100',
+    description: '止于至善，静止安稳',
+    judgment: '艮其背，不获其身。行其庭，不见其人，无咎。',
+    image: '艮卦代表静止，适时而止。'
+  },
+  {
+    number: 53,
+    name: '风山渐',
+    upperTrigram: '巽',
+    lowerTrigram: '艮',
+    binary: '110100',
+    description: '循序渐进，女归吉祥',
+    judgment: '女归吉，利贞。',
+    image: '渐卦表示渐进，稳步前行。'
+  },
+  {
+    number: 54,
+    name: '雷泽归妹',
+    upperTrigram: '震',
+    lowerTrigram: '兑',
+    binary: '001011',
+    description: '少女出嫁，征凶无攸利',
+    judgment: '征凶，无攸利。',
+    image: '归妹卦代表婚嫁，需要慎重。'
+  },
+  {
+    number: 55,
+    name: '雷火丰',
+    upperTrigram: '震',
+    lowerTrigram: '离',
+    binary: '001101',
+    description: '盛大丰盛，把握当下',
+    judgment: '亨。王假之，勿忧，宜日中。',
+    image: '丰卦代表丰盛，盛极当守。'
+  },
+  {
+    number: 56,
+    name: '火山旅',
+    upperTrigram: '离',
+    lowerTrigram: '艮',
+    binary: '101100',
+    description: '旅途羁旅，谨慎小心',
+    judgment: '小亨。旅贞吉。',
+    image: '旅卦表示旅行，需要谨慎。'
+  },
+  {
+    number: 57,
+    name: '巽为风',
+    upperTrigram: '巽',
+    lowerTrigram: '巽',
+    binary: '110110',
+    description: '谦逊顺从，随风而动',
+    judgment: '小亨，利有攸往，利见大人。',
+    image: '巽卦代表风，顺势而为。'
+  },
+  {
+    number: 58,
+    name: '兑为泽',
+    upperTrigram: '兑',
+    lowerTrigram: '兑',
+    binary: '011011',
+    description: '喜悦和乐，刚内柔外',
+    judgment: '亨，利贞。',
+    image: '兑卦代表喜悦，和悦待人。'
+  },
+  {
+    number: 59,
+    name: '风水涣',
+    upperTrigram: '巽',
+    lowerTrigram: '坎',
+    binary: '110010',
+    description: '涣散离散，拯救涣散',
+    judgment: '亨。王假有庙，利涉大川，利贞。',
+    image: '涣卦表示涣散，需要凝聚。'
+  },
+  {
+    number: 60,
+    name: '水泽节',
+    upperTrigram: '坎',
+    lowerTrigram: '兑',
+    binary: '010011',
+    description: '节制有度，适可而止',
+    judgment: '亨。苦节，不可贞。',
+    image: '节卦代表节制，凡事有度。'
+  },
+  {
+    number: 61,
+    name: '风泽中孚',
+    upperTrigram: '巽',
+    lowerTrigram: '兑',
+    binary: '110011',
+    description: '诚信为本，中心诚信',
+    judgment: '豚鱼吉，利涉大川，利贞。',
+    image: '中孚卦表示诚信，真诚待人。'
+  },
+  {
+    number: 62,
+    name: '雷山小过',
+    upperTrigram: '震',
+    lowerTrigram: '艮',
+    binary: '001100',
+    description: '小有过越，谦逊自守',
+    judgment: '亨，利贞。可小事，不可大事。',
+    image: '小过卦代表小过，需要谨慎。'
+  },
+  {
+    number: 63,
+    name: '水火既济',
+    upperTrigram: '坎',
+    lowerTrigram: '离',
+    binary: '010101',
+    description: '功成圆满，守成不易',
+    judgment: '亨小，利贞。初吉终乱。',
+    image: '既济卦表示已成，需要守成。'
+  },
+  {
+    number: 64,
+    name: '火水未济',
+    upperTrigram: '离',
+    lowerTrigram: '坎',
+    binary: '101010',
+    description: '未竟之功，谨慎前行',
+    judgment: '亨。小狐汔济，濡其尾，无攸利。',
+    image: '未济卦代表未成，需要继续努力。'
+  }
+]
+
+// 根据六爻查找对应的卦
+export function getHexagramByLines(lines: number[]): Hexagram | null {
+  // 将六爻转换为二进制字符串（从下到上）
+  const binary = lines.map(line => line === 1 ? '1' : '0').join('')
+  return hexagrams.find(h => h.binary === binary) || null
+}
+
