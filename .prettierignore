@@ -1,0 +1,12 @@
+node_modules
+dist
+.taro
+.temp
+.rn_temp
+build
+coverage
+*.min.js
+*.min.css
+yarn.lock
+package-lock.json
+

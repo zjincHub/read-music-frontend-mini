@@ -12,7 +12,7 @@
 ## 技术栈
 
 - **框架**：Taro 4.1.7 (多端开发框架)
-- **UI库**：NutUI React Taro
+- **UI组件**：Taro Components
 - **语言**：TypeScript
 - **样式**：Sass
 

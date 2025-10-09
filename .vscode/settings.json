@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "src/index.html": "html"
+  },
+  "html.validate.scripts": false,
+  "html.validate.styles": false
+}

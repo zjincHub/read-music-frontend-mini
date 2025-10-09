@@ -1,0 +1,12 @@
+node_modules
+dist
+.taro
+.temp
+.rn_temp
+build
+coverage
+*.config.js
+babel.config.js
+.eslintrc.js
+*.html
+
