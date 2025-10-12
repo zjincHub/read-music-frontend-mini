@@ -8,21 +8,21 @@ export default defineAppConfig({
   },
   tabBar: {
     color: "#999999",
-    selectedColor: "#1a1a1a",
+    selectedColor: "#0064cf",
     backgroundColor: "#ffffff",
     borderStyle: "black",
     list: [
       {
         pagePath: "pages/index/index",
         text: "首页",
-        // iconPath: 'assets/icons/home.png',
-        // selectedIconPath: 'assets/icons/home-active.png'
+        iconPath: "./assets/icons/home.png",
+        selectedIconPath: "./assets/icons/home-active.png",
       },
       {
         pagePath: "pages/mine/index",
         text: "我的",
-        // iconPath: 'assets/icons/mine.png',
-        // selectedIconPath: 'assets/icons/mine-active.png'
+        iconPath: "./assets/icons/mine.png",
+        selectedIconPath: "./assets/icons/mine-active.png",
       },
     ],
   },

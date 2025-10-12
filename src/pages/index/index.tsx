@@ -192,17 +192,17 @@ function Index() {
           <View className="detail-section">
             {calculatedTextList.length === 2 && (
               <View>
-                <Text className="section-title">卦辞（主）</Text>
+                <Text className="section-title">卦辞/爻辞（主）</Text>
                 <Text className="section-content">{calculatedTextList[0]}</Text>
                 <Text className="section-title" style={{ marginTop: "20px" }}>
-                  卦辞（副）
+                  卦辞/爻辞（副）
                 </Text>
                 <Text className="section-content">{calculatedTextList[1]}</Text>
               </View>
             )}
             {calculatedTextList.length === 1 && (
               <View>
-                <Text className="section-title">卦辞</Text>
+                <Text className="section-title">卦辞/爻辞</Text>
                 <Text className="section-content">{calculatedTextList[0]}</Text>
               </View>
             )}
