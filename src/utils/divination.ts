@@ -37,9 +37,9 @@ export function shakeCoin(): YaoResult {
 
   switch (yangCount) {
     case 3:
-      // 三个正面：老阳（9）变爻，阳→阴
-      value = 9;
-      isYang = true;
+      // 三个正面：老阴（6）变爻，阴→阳
+      value = 6;
+      isYang = false;
       isChanging = true;
       break;
     case 2:
@@ -55,9 +55,9 @@ export function shakeCoin(): YaoResult {
       isChanging = false;
       break;
     case 0:
-      // 零个正面：老阴（6）变爻，阴→阳
+      // 零个正面：老阳（9）变爻，阳→阴
       value = 6;
-      isYang = false;
+      isYang = true;
       isChanging = true;
       break;
     default:
@@ -133,8 +133,64 @@ export function getYaoName(yao: YaoResult): string {
 }
 
 /**
- * 获取爻的符号
+ * 计算卦辞的函数
  */
-export function getYaoSymbol(isYang: boolean): string {
-  return isYang ? "━━" : "━ ━";
+export function calculateHexagramText(
+  yaos: YaoResult[],
+  mainHexagram: { judgment: string; yaoTexts: string[]; name: string },
+  changeHexagram?: { judgment: string; yaoTexts: string[] },
+): string[] {
+  // 计算变爻数量
+  const changingCount = yaos.filter((yao) => yao.isChanging).length;
+
+  if (changingCount === 0) {
+    // 6爻不变，取本卦的卦辞
+    return [mainHexagram.judgment];
+  } else if (changingCount === 1) {
+    // 1爻变，取本卦中这个变爻的爻辞
+    const changingYaoIndex = yaos.findIndex((yao) => yao.isChanging);
+    return [mainHexagram.yaoTexts[changingYaoIndex]];
+  } else if (changingCount === 2) {
+    // 2爻变，取本卦中这两个变爻的爻辞，以靠上爻的爻辞为主
+    const changingYaoIndices = yaos
+      .map((yao, index) => ({ yao, index }))
+      .filter(({ yao }) => yao.isChanging)
+      .map(({ index }) => index);
+    const upperYaoIndex = Math.max(...changingYaoIndices);
+    const lowerYaoIndex = Math.min(...changingYaoIndices);
+    return [
+      mainHexagram.yaoTexts[upperYaoIndex],
+      mainHexagram.yaoTexts[lowerYaoIndex],
+    ];
+  } else if (changingCount === 3) {
+    // 3爻变，取本卦和变卦的卦辞
+    return [mainHexagram.judgment, changeHexagram?.judgment as string];
+  } else if (changingCount === 4) {
+    // 4爻变，取变卦中两个不变爻的爻辞，以靠下爻的爻辞为主
+    const unchangedYaoIndices = yaos
+      .map((yao, index) => ({ yao, index }))
+      .filter(({ yao }) => !yao.isChanging)
+      .map(({ index }) => index);
+    const upperYaoIndex = Math.max(...unchangedYaoIndices);
+    const lowerYaoIndex = Math.min(...unchangedYaoIndices);
+    return [
+      changeHexagram?.yaoTexts[lowerYaoIndex] as string,
+      changeHexagram?.yaoTexts[upperYaoIndex] as string,
+    ];
+  } else if (changingCount === 5) {
+    // 5爻变，取变卦中不变爻的爻辞
+    const unchangedYaoIndex = yaos.findIndex((yao) => !yao.isChanging);
+    return [changeHexagram?.yaoTexts[unchangedYaoIndex] as string];
+  } else if (changingCount === 6) {
+    // 6爻变，如果是"乾"、"坤"就用它们的第7个爻辞，其他卦则取变卦的卦辞
+    if (mainHexagram.name === "乾为天") {
+      return [mainHexagram.yaoTexts[6]];
+    } else if (mainHexagram.name === "坤为地") {
+      return [mainHexagram.yaoTexts[6]];
+    } else {
+      return [changeHexagram?.judgment as string];
+    }
+  }
+
+  return [mainHexagram.judgment as string];
 }

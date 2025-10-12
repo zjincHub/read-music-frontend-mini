@@ -7,8 +7,8 @@ import { getHexagramByLines, Hexagram } from "../../data/hexagrams";
 import {
   shakeCoin,
   performDivination,
-  getYaoSymbol,
   YaoResult,
+  calculateHexagramText,
 } from "../../utils/divination";
 import "./index.scss";
 
@@ -18,6 +18,8 @@ function Index() {
   const [isShaking, setIsShaking] = useState(false); // 是否正在摇
   const [showResult, setShowResult] = useState(false); // 是否显示结果
   const [hexagram, setHexagram] = useState<Hexagram | null>(null); // 卦象
+  const [changeHexagram, setChangeHexagram] = useState<Hexagram | null>(null); // 变卦
+  const [calculatedTextList, setCalculatedTextList] = useState<string[]>([]); // 计算出的卦辞
 
   // 摇铜钱
   const handleShake = () => {
@@ -35,19 +37,56 @@ function Index() {
       setYaos(newYaos);
       setCurrentShake(currentShake + 1);
       setIsShaking(false);
-
-      // 如果已经摇了6次，显示结果
-      if (currentShake + 1 === 6) {
-        const divination = performDivination(newYaos);
-        const foundHexagram = getHexagramByLines(divination.mainHexagram);
-        setHexagram(foundHexagram);
-
-        // 延迟显示结果页面
-        setTimeout(() => {
-          setShowResult(true);
-        }, 500);
-      }
     }, 600);
+  };
+
+  // 解卦
+  const handleResolveHexagram = () => {
+    setIsShaking(true);
+    // 计算并设置卦象
+    const divination = performDivination(yaos);
+    const foundHexagram = getHexagramByLines(divination.mainHexagram);
+    setHexagram(foundHexagram);
+
+    let foundChangeHexagram: Hexagram | null = null;
+    // 如果有变卦，则设置变卦
+    if (divination.hasChange) {
+      foundChangeHexagram = getHexagramByLines(
+        divination.changeHexagram as number[],
+      );
+      setChangeHexagram(foundChangeHexagram);
+    }
+
+    // 计算卦辞
+    if (foundHexagram) {
+      const textList = calculateHexagramText(
+        yaos,
+        foundHexagram,
+        foundChangeHexagram || undefined,
+      );
+      setCalculatedTextList(textList);
+    }
+
+    // 延迟显示结果页面
+    setTimeout(() => {
+      setShowResult(true);
+      setIsShaking(false);
+    }, 500);
+  };
+
+  // 计算按钮文本
+  const getButtonText = () => {
+    if (isShaking && currentShake < 6) {
+      return " 摇铜钱中...";
+    } else if (isShaking && currentShake === 6) {
+      return " 正在解卦...";
+    } else if (currentShake === 0) {
+      return "开始占卜";
+    } else if (currentShake === 6) {
+      return "解卦";
+    } else {
+      return `摇第 ${currentShake + 1} 次`;
+    }
   };
 
   // 重新开始
@@ -57,6 +96,8 @@ function Index() {
     setIsShaking(false);
     setShowResult(false);
     setHexagram(null);
+    setChangeHexagram(null);
+    setCalculatedTextList([]);
   };
 
   // 渲染铜钱
@@ -64,7 +105,10 @@ function Index() {
     return (
       <View className="coins-container">
         {coins.map((coin, index) => (
-          <View key={index} className={`coin ${isShaking ? "shaking" : ""}`}>
+          <View
+            key={index}
+            className={`coin ${isShaking && currentShake < 6 ? "shaking" : ""}`}
+          >
             <Image
               src={coin === 1 ? CoinFront : CoinBack}
               className="coin-image"
@@ -80,11 +124,9 @@ function Index() {
   if (showResult && hexagram) {
     return (
       <View className="result-page">
-        <View className="result-header">
-          <Text className="result-title">占卜结果</Text>
-        </View>
-
+        {/* 本卦 */}
         <View className="hexagram-container">
+          <View className="hexagram-label">本卦</View>
           <View className="hexagram-name">{hexagram.name}</View>
           <View className="hexagram-number">第{hexagram.number}卦</View>
 
@@ -94,16 +136,7 @@ function Index() {
               .reverse()
               .map((yao, index) => (
                 <View key={index} className="yao-line">
-                  <View
-                    className={`yao-symbol ${yao.isYang ? "yang" : "yin"} ${
-                      yao.isChanging ? "changing" : ""
-                    }`}
-                  >
-                    {getYaoSymbol(yao.isYang)}
-                  </View>
-                  {yao.isChanging && (
-                    <View className="change-indicator">●</View>
-                  )}
+                  {getYaoSymbolResult(yao.isYang, yao.isChanging)}
                 </View>
               ))}
           </View>
@@ -120,20 +153,59 @@ function Index() {
           </View>
         </View>
 
+        {/* 变卦 */}
+        {changeHexagram && (
+          <View className="hexagram-container">
+            <View className="hexagram-label">变卦</View>
+            <View className="hexagram-name">{changeHexagram.name}</View>
+            <View className="hexagram-number">第{changeHexagram.number}卦</View>
+
+            <View className="hexagram-lines">
+              {yaos
+                .slice()
+                .reverse()
+                .map((yao, index) => (
+                  <View key={index} className="yao-line">
+                    {getChangeYaoSymbolResult(yao.isYang, yao.isChanging)}
+                  </View>
+                ))}
+            </View>
+
+            <View className="hexagram-info">
+              <View className="info-item">
+                <Text className="info-label">上卦：</Text>
+                <Text className="info-value">
+                  {changeHexagram.upperTrigram}
+                </Text>
+              </View>
+              <View className="info-item">
+                <Text className="info-label">下卦：</Text>
+                <Text className="info-value">
+                  {changeHexagram.lowerTrigram}
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+
         <View className="hexagram-detail">
           <View className="detail-section">
-            <Text className="section-title">卦象说明</Text>
-            <Text className="section-content">{hexagram.description}</Text>
-          </View>
-
-          <View className="detail-section">
-            <Text className="section-title">卦辞</Text>
-            <Text className="section-content">{hexagram.judgment}</Text>
-          </View>
-
-          <View className="detail-section">
-            <Text className="section-title">象辞</Text>
-            <Text className="section-content">{hexagram.image}</Text>
+            {calculatedTextList.length === 2 && (
+              <View>
+                <Text className="section-title">卦辞（主）</Text>
+                <Text className="section-content">{calculatedTextList[0]}</Text>
+                <Text className="section-title" style={{ marginTop: "20px" }}>
+                  卦辞（副）
+                </Text>
+                <Text className="section-content">{calculatedTextList[1]}</Text>
+              </View>
+            )}
+            {calculatedTextList.length === 1 && (
+              <View>
+                <Text className="section-title">卦辞</Text>
+                <Text className="section-content">{calculatedTextList[0]}</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -166,6 +238,44 @@ function Index() {
         </View>
       </View>
 
+      <View className="shake-container">
+        <View className="instruction">
+          <Text className="instruction-text">
+            {currentShake === 0
+              ? "点击下方按钮，摇三枚铜钱"
+              : currentShake === 6
+                ? "点击下方按钮，解卦"
+                : "继续摇铜钱"}
+          </Text>
+        </View>
+
+        <Button
+          type="primary"
+          className="shake-button"
+          onClick={() => {
+            if (currentShake < 6) {
+              handleShake();
+            } else {
+              handleResolveHexagram();
+            }
+          }}
+          disabled={isShaking}
+          loading={isShaking}
+        >
+          {getButtonText()}
+        </Button>
+
+        {currentShake > 0 && (
+          <Button
+            className="reset-button"
+            onClick={handleReset}
+            disabled={isShaking}
+          >
+            重新开始
+          </Button>
+        )}
+      </View>
+
       {currentShake > 0 && (
         <View className="yaos-display">
           <View className="yaos-title">已得爻象（从下往上）</View>
@@ -175,10 +285,8 @@ function Index() {
               .reverse()
               .map((yao, index) => (
                 <View key={index} className="yao-item">
-                  <View className="yao-index">第{yaos.length - index}爻</View>
-                  <View className={`yao-symbol ${yao.isYang ? "yang" : "yin"}`}>
-                    {getYaoSymbol(yao.isYang)}
-                  </View>
+                  <View className="yao-index">第 {yaos.length - index} 爻</View>
+                  {getYaoSymbol(yao.isYang, yao.isChanging)}
                   {renderCoins(yao.coins)}
                 </View>
               ))}
@@ -186,41 +294,11 @@ function Index() {
         </View>
       )}
 
-      {currentShake < 6 && (
-        <View className="shake-container">
-          <View className="instruction">
-            <Text className="instruction-text">
-              {currentShake === 0 ? "点击下方按钮，摇三枚铜钱" : "继续摇铜钱"}
-            </Text>
-          </View>
-
-          <Button
-            type="primary"
-            className="shake-button"
-            onClick={handleShake}
-            disabled={isShaking}
-            loading={isShaking}
-          >
-            {isShaking
-              ? "摇铜钱中..."
-              : currentShake === 0
-                ? "开始占卜"
-                : `摇第 ${currentShake + 1} 次`}
-          </Button>
-
-          {currentShake > 0 && (
-            <Button className="reset-button" onClick={handleReset}>
-              重新开始
-            </Button>
-          )}
-        </View>
-      )}
-
       <View className="tips">
         <View className="tips-title">占卜说明</View>
         <View className="tips-content">
           <Text>• 共需摇铜钱6次，每次摇3枚铜钱</Text>
-          <Text>• 三个正面为老阳，三个反面为老阴</Text>
+          <Text>• 三个正面为老阴，三个反面为老阳</Text>
           <Text>• 两个正面为少阳，一个正面为少阴</Text>
           <Text>• 从下往上依次形成六爻，最终得出卦象</Text>
         </View>
@@ -228,5 +306,100 @@ function Index() {
     </View>
   );
 }
+
+// 获取爻的符号组件
+const getYaoSymbol = (isYang: boolean, isChanging: boolean = false) => {
+  if (isYang && !isChanging) {
+    // 少阳
+    return (
+      <div className="yao-symbol-container">
+        <div className="yao-symbol-yang"></div>
+      </div>
+    );
+  } else if (isYang && isChanging) {
+    // 老阳
+    return (
+      <div className="yao-symbol-container">
+        <div className="yao-symbol-yang"></div>
+        <div className="yao-symbol-changing"></div>
+      </div>
+    );
+  } else if (!isYang && !isChanging) {
+    // 少阴
+    return (
+      <div className="yao-symbol-container">
+        <div className="yao-symbol-yin-1"></div>
+        <div className="yao-symbol-yin-2"></div>
+      </div>
+    );
+  } else {
+    // 老阴
+    return (
+      <div className="yao-symbol-container">
+        <div className="yao-symbol-yin-1"></div>
+        <div className="yao-symbol-yin-2"></div>
+        <div className="yao-symbol-changing"></div>
+      </div>
+    );
+  }
+};
+
+// 获取爻的符号组件
+const getYaoSymbolResult = (isYang: boolean, isChanging: boolean = false) => {
+  if (isYang && !isChanging) {
+    // 少阳
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yang"></div>
+      </div>
+    );
+  } else if (isYang && isChanging) {
+    // 老阳
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yang"></div>
+        <div className="yao-symbol-changing"></div>
+      </div>
+    );
+  } else if (!isYang && !isChanging) {
+    // 少阴
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yin-1"></div>
+        <div className="yao-symbol-yin-2"></div>
+      </div>
+    );
+  } else {
+    // 老阴
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yin-1"></div>
+        <div className="yao-symbol-yin-2"></div>
+        <div className="yao-symbol-changing"></div>
+      </div>
+    );
+  }
+};
+
+// 获取变卦的爻的符号组件
+const getChangeYaoSymbolResult = (
+  isYang: boolean,
+  isChanging: boolean = false,
+) => {
+  if ((isYang && !isChanging) || (!isYang && isChanging)) {
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yang"></div>
+      </div>
+    );
+  } else {
+    return (
+      <div className="yao-symbol-result-container">
+        <div className="yao-symbol-yin-1"></div>
+        <div className="yao-symbol-yin-2"></div>
+      </div>
+    );
+  }
+};
 
 export default Index;
