@@ -12,6 +12,7 @@ interface ResultData {
   changeHexagram?: Hexagram;
   calculatedTextList: string[];
   aiResult: AIAnalysis | null;
+  userInput: string; // 用户输入
 }
 
 function Result() {
@@ -107,11 +108,19 @@ function Result() {
     );
   }
 
-  const { yaos, hexagram, changeHexagram, calculatedTextList, aiResult } =
+  const { yaos, hexagram, changeHexagram, aiResult, userInput } =
     resultData;
 
   return (
     <View className="result-page">
+      {/* 显示所求何事 */}
+      {userInput && (
+        <View className="user-question-display">
+          <Text className="user-question-label">所求何事：</Text>
+          <Text className="user-question-text">{userInput}</Text>
+        </View>
+      )}
+
       {/* 本卦 */}
       <View className="hexagram-container">
         <View className="hexagram-label">本卦</View>

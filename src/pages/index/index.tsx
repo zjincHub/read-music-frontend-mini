@@ -1,21 +1,55 @@
 import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { View, Text, Button, Image } from "@tarojs/components";
+import { View, Text, Button, Image, Textarea } from "@tarojs/components";
 import CoinFront from "../../assets/images/coin-front.png";
 import CoinBack from "../../assets/images/coin-back.png";
 import { getHexagramByLines, Hexagram } from "../../data/hexagrams";
+import { callCozeAPI, buildCozeInput } from "../../utils/coze";
 import {
   shakeCoin,
   performDivination,
   YaoResult,
 } from "../../utils/divination";
-import { callCozeAPI, buildCozeInput } from "../../utils/coze";
 import "./index.scss";
 
 function Index() {
   const [yaos, setYaos] = useState<YaoResult[]>([]); // 已经摇出的爻
   const [currentShake, setCurrentShake] = useState(0); // 当前摇的次数
   const [isShaking, setIsShaking] = useState(false); // 是否正在摇或者解卦
+  const [showInputModal, setShowInputModal] = useState(false); // 显示输入弹窗
+  const [userInput, setUserInput] = useState(""); // 用户输入
+  const [tempInput, setTempInput] = useState(""); // 临时输入
+
+  // 开始占卜前的检查
+  const handleStartDivination = () => {
+    if (!userInput.trim()) {
+      // 显示自定义输入弹窗
+      setTempInput("");
+      setShowInputModal(true);
+      return;
+    }
+    handleShake();
+  };
+
+  // 确认输入
+  const handleConfirmInput = () => {
+    if (tempInput.trim()) {
+      setUserInput(tempInput.trim());
+      setShowInputModal(false);
+      handleShake();
+    } else {
+      Taro.showToast({
+        title: "请输入所求之事",
+        icon: "none",
+      });
+    }
+  };
+
+  // 取消输入
+  const handleCancelInput = () => {
+    setShowInputModal(false);
+    setTempInput("");
+  };
 
   // 摇铜钱
   const handleShake = () => {
@@ -59,6 +93,7 @@ function Index() {
         .filter((num) => num !== null) as number[];
 
       const inputText = buildCozeInput(
+        userInput,
         foundHexagram?.number || 0,
         foundHexagram?.name || "",
         changeYaoNumbers,
@@ -73,6 +108,7 @@ function Index() {
         hexagram: foundHexagram,
         changeHexagram: foundChangeHexagram,
         aiResult: aiResultObject,
+        userInput: userInput, // 添加用户输入
       };
 
       // 跳转到结果页面
@@ -113,6 +149,7 @@ function Index() {
     setYaos([]);
     setCurrentShake(0);
     setIsShaking(false);
+    setUserInput(""); // 清空用户输入
   };
 
   // 渲染铜钱
@@ -151,6 +188,14 @@ function Index() {
         </View>
       </View>
 
+      {/* 显示所求之事 */}
+      {userInput && (
+        <View className="user-input-display">
+          <Text className="user-input-label">所之何事：</Text>
+          <Text className="user-input-text">{userInput}</Text>
+        </View>
+      )}
+
       <View className="shake-container">
         <View className="instruction">
           <Text className="instruction-text">
@@ -166,7 +211,9 @@ function Index() {
           type="primary"
           className="shake-button"
           onClick={() => {
-            if (currentShake < 6) {
+            if (currentShake === 0) {
+              handleStartDivination();
+            } else if (currentShake < 6) {
               handleShake();
             } else {
               handleResolveHexagram();
@@ -216,6 +263,45 @@ function Index() {
           <Text>• 从下往上依次形成六爻，最终得出卦象</Text>
         </View>
       </View>
+
+      {/* 自定义输入弹窗 */}
+      {showInputModal && (
+        <View className="modal-overlay" onClick={handleCancelInput}>
+          <View
+            className="modal-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <View className="modal-header">
+              <Text className="modal-title">所求之事</Text>
+            </View>
+            <View className="modal-body">
+              <Text className="modal-description">请输入您想要占卜的问题</Text>
+              <Textarea
+                className="modal-textarea"
+                placeholder="请输入所求之事"
+                value={tempInput}
+                onInput={(e) => setTempInput(e.detail.value)}
+                focus={showInputModal}
+                maxlength={200}
+                showConfirmBar={false}
+                autoHeight={false}
+                fixed={false}
+              />
+            </View>
+            <View className="modal-footer">
+              <Text className="modal-button cancel" onClick={handleCancelInput}>
+                取消
+              </Text>
+              <Text
+                className="modal-button confirm"
+                onClick={handleConfirmInput}
+              >
+                确认
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }

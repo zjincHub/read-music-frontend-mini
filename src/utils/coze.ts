@@ -105,6 +105,7 @@ export const callCozeAPI = async (inputText: string): Promise<AIAnalysis> => {
 
 // 构建 Coze API 的输入参数
 export const buildCozeInput = (
+  userInput: string,
   hexagramNumber: number,
   hexagramName: string,
   changeYaoNumbers: number[],
@@ -114,5 +115,5 @@ export const buildCozeInput = (
       ? `变爻：${changeYaoNumbers.join("、")}。`
       : "无变爻。";
 
-  return `所求之事：占卜运势；所求卦象：第${hexagramNumber}卦${hexagramName}；${changeYaoText}`;
+  return `所求之事：${userInput}；所求卦象：第${hexagramNumber}卦${hexagramName}；${changeYaoText}`;
 };

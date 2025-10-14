@@ -39,6 +39,159 @@
     }
   }
 
+  .input-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .input-label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .user-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #f8f9fa;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+
+      &:focus {
+        border-color: #007bff;
+        background: #ffffff;
+      }
+    }
+  }
+
+  .user-input-display {
+    background: #e3f2fd;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .user-input-label {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .user-input-text {
+      font-size: 16px;
+      color: #333333;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .modal-container {
+      width: 80%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+      .modal-header {
+        padding: 20px;
+        background: #007bff;
+        text-align: center;
+
+        .modal-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #ffffff;
+        }
+      }
+
+      .modal-body {
+        padding: 20px;
+
+        .modal-description {
+          font-size: 14px;
+          color: #666666;
+          margin-bottom: 16px;
+          display: block;
+        }
+
+        .modal-textarea {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e9ecef;
+          border-radius: 8px;
+          font-size: 16px;
+          background: #f8f9fa;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 120px; /* 约5行的高度 */
+          resize: none;
+
+          &:focus {
+            border-color: #007bff;
+            background: #ffffff;
+          }
+        }
+      }
+
+      .modal-footer {
+        display: flex;
+        border-top: 1px solid #e9ecef;
+
+        .modal-button {
+          flex: 1;
+          padding: 16px;
+          text-align: center;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background 0.3s ease;
+          user-select: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &.cancel {
+            color: #666666;
+            border-right: 1px solid #e9ecef;
+
+            &:active {
+              background: #f8f9fa;
+            }
+          }
+
+          &.confirm {
+            color: #007bff;
+            font-weight: bold;
+
+            &:active {
+              background: #f8f9fa;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .yaos-display {
     background: #ffffff;
     border-radius: 16px;

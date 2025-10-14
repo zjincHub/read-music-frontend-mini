@@ -3,6 +3,28 @@
   padding: 20px;
   box-sizing: border-box;
 
+  .user-question-display {
+    background: #e3f2fd;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .user-question-label {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .user-question-text {
+      font-size: 16px;
+      color: #333333;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+  }
+
   .hexagram-container {
     background: #ffffff;
     border-radius: 20px;
