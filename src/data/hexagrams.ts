@@ -1,3 +1,10 @@
+// AI解析结果
+export interface AIAnalysis {
+  hexagramAnalysis: string;
+  hexagramDescription: string;
+  result: string;
+}
+
 // 易经64卦数据
 export interface Hexagram {
   number: number;
