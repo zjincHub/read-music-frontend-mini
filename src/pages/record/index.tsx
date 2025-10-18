@@ -1,6 +1,6 @@
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState } from "react";
-import { View, Text, ScrollView } from "@tarojs/components";
+import { View, Text } from "@tarojs/components";
 import { ResultData } from "../../data/hexagrams";
 import "./index.scss";
 

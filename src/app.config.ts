@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  pages: ["pages/index/index", "pages/result/index", "pages/mine/index"],
+  pages: ["pages/divinate/index", "pages/record/index", "pages/result/index"],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
@@ -13,13 +13,13 @@ export default defineAppConfig({
     borderStyle: "black",
     list: [
       {
-        pagePath: "pages/index/index",
+        pagePath: "pages/divinate/index",
         text: "首页",
         iconPath: "./assets/icons/home.png",
         selectedIconPath: "./assets/icons/home-active.png",
       },
       {
-        pagePath: "pages/mine/index",
+        pagePath: "pages/record/index",
         text: "我的",
         iconPath: "./assets/icons/mine.png",
         selectedIconPath: "./assets/icons/mine-active.png",
