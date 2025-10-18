@@ -1,3 +1,18 @@
+import { YaoResult } from "../utils/divination";
+
+// 结果页面的数据类型（合并了占卜记录的数据）
+export interface ResultData {
+  id: string; // 记录ID
+  dateTime: string; // 格式化日期时间
+  timestamp: number; // 时间戳
+  yaos: YaoResult[];
+  hexagram: Hexagram;
+  changeHexagram?: Hexagram;
+  calculatedTextList: string[];
+  aiResult: AIAnalysis | null;
+  userInput: string; // 用户输入
+}
+
 // AI解析结果
 export interface AIAnalysis {
   hexagramAnalysis: string;

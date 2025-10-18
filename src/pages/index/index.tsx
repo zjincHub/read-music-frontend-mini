@@ -104,12 +104,24 @@ function Index() {
 
       // 准备结果数据
       const resultData = {
+        id: Date.now().toString(),
+        timestamp: new Date().getTime(), // 添加时间戳
+        dateTime: new Date().toLocaleString("zh-CN"), // 添加格式化时间
         yaos,
         hexagram: foundHexagram,
         changeHexagram: foundChangeHexagram,
         aiResult: aiResultObject,
         userInput: userInput, // 添加用户输入
       };
+
+      // 保存到localStorage
+      try {
+        const existingRecords = Taro.getStorageSync("divinationRecords") || [];
+        const updatedRecords = [resultData, ...existingRecords];
+        Taro.setStorageSync("divinationRecords", updatedRecords);
+      } catch (error) {
+        console.error("保存占卜记录失败:", error);
+      }
 
       // 跳转到结果页面
       Taro.navigateTo({
@@ -191,7 +203,7 @@ function Index() {
       {/* 显示所求之事 */}
       {userInput && (
         <View className="user-input-display">
-          <Text className="user-input-label">所之何事：</Text>
+          <Text className="user-input-label">所求之事：</Text>
           <Text className="user-input-text">{userInput}</Text>
         </View>
       )}

@@ -1,19 +1,8 @@
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";
 import { View, Text, Button } from "@tarojs/components";
-import { AIAnalysis, Hexagram } from "../../data/hexagrams";
-import { YaoResult } from "../../utils/divination";
+import { ResultData } from "../../data/hexagrams";
 import "./index.scss";
-
-// 结果页面的数据类型
-interface ResultData {
-  yaos: YaoResult[];
-  hexagram: Hexagram;
-  changeHexagram?: Hexagram;
-  calculatedTextList: string[];
-  aiResult: AIAnalysis | null;
-  userInput: string; // 用户输入
-}
 
 function Result() {
   const [resultData, setResultData] = useState<ResultData | null>(null);
@@ -108,8 +97,7 @@ function Result() {
     );
   }
 
-  const { yaos, hexagram, changeHexagram, aiResult, userInput } =
-    resultData;
+  const { yaos, hexagram, changeHexagram, aiResult, userInput } = resultData;
 
   return (
     <View className="result-page">
