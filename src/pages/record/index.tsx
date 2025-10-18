@@ -4,7 +4,7 @@ import { View, Text } from "@tarojs/components";
 import { ResultData } from "../../data/hexagrams";
 import "./index.scss";
 
-function Mine() {
+function Record() {
   const [records, setRecords] = useState<ResultData[]>([]);
 
   // 加载占卜记录
@@ -55,7 +55,7 @@ function Mine() {
   };
 
   return (
-    <View className="mine-page">
+    <View className="record-page">
       {records.length === 0 ? (
         <View className="empty-state">
           <Text className="empty-text">暂无占卜记录</Text>
@@ -96,4 +96,4 @@ function Mine() {
   );
 }
 
-export default Mine;
+export default Record;

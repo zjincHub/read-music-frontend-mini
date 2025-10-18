@@ -12,7 +12,7 @@ import {
 } from "../../utils/divination";
 import "./index.scss";
 
-function Index() {
+function Divinate() {
   const [yaos, setYaos] = useState<YaoResult[]>([]); // 已经摇出的爻
   const [currentShake, setCurrentShake] = useState(0); // 当前摇的次数
   const [isShaking, setIsShaking] = useState(false); // 是否正在摇或者解卦
@@ -186,7 +186,7 @@ function Index() {
 
   // 摇卦页面
   return (
-    <View className="index-page">
+    <View className="divinate-page">
       <View className="progress-container">
         <View className="progress-text">
           {currentShake === 0 ? "准备开始" : `第 ${currentShake} 爻`}
@@ -355,4 +355,4 @@ const getYaoSymbol = (isYang: boolean, isChanging: boolean = false) => {
   }
 };
 
-export default Index;
+export default Divinate;

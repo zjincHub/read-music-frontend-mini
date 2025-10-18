@@ -1,9 +1,15 @@
 export default defineAppConfig({
-  pages: ["pages/divinate/index", "pages/record/index", "pages/result/index"],
+  pages: [
+    "pages/query/index",
+    "pages/divinate/index",
+    "pages/record/index",
+    "pages/result/index",
+    "pages/detail/index",
+  ],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "虎虎半仙",
+    navigationBarTitleText: "卜卜鲸",
     navigationBarTextStyle: "black",
   },
   tabBar: {
@@ -13,8 +19,8 @@ export default defineAppConfig({
     borderStyle: "black",
     list: [
       {
-        pagePath: "pages/divinate/index",
-        text: "首页",
+        pagePath: "pages/query/index",
+        text: "查卦",
         iconPath: "./assets/icons/home.png",
         selectedIconPath: "./assets/icons/home-active.png",
       },

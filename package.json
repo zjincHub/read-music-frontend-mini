@@ -2,7 +2,7 @@
   "name": "huhu-immortal",
   "version": "1.0.0",
   "private": true,
-  "description": "虎虎半仙-易经占卜小程序",
+  "description": "卜卜鲸-易经占卜小程序",
   "templateInfo": {
     "name": "react",
     "typescript": true,
