@@ -75,7 +75,7 @@
   }
 }
 
-/* ===== DAW-like Editor ===== */
+/* 时间轴编辑区 */
 .editor-container {
   position: relative;
   width: 100%;
@@ -84,7 +84,7 @@
   overflow: hidden;
   margin-top: 20rpx;
   margin-bottom: 30rpx;
-  height: 500rpx;   /* total height of wave + chord area */
+  height: 500rpx;   /* 波形区和和弦区的总高度 */
 }
 
 .tracks-scroll-view {
