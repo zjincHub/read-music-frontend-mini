@@ -1,5 +1,6 @@
 export default defineAppConfig({
   pages: [
+    "pages/chord/index",
     "pages/query/index",
     "pages/divinate/index",
     "pages/record/index",
@@ -9,7 +10,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "卜卜鲸",
+    navigationBarTitleText: "和弦识别",
     navigationBarTextStyle: "black",
   },
   tabBar: {
