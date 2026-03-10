@@ -27,8 +27,10 @@ export default function ChordRecognition() {
   const isScrubbingRef = useRef(false);
   const scrollLeftRef = useRef(0);
   const pxPerSec = 50;
-  const timelineCanvasRef = useRef<any>(null);
-  const timelineCanvasSizeRef = useRef({ width: 0, height: 0 });
+  const staticCanvasRef = useRef<any>(null);
+  const staticCanvasSizeRef = useRef({ width: 0, height: 0 });
+  const playheadCanvasRef = useRef<any>(null);
+  const playheadCanvasSizeRef = useRef({ width: 0, height: 0 });
   const playbackSyncTimerRef = useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
@@ -299,10 +301,9 @@ export default function ChordRecognition() {
     if (!chords.length) return;
 
     const timer = setTimeout(() => {
-      const drawTimeline = () => {
-        const canvas = timelineCanvasRef.current;
-        const { width: cssWidth, height: cssHeight } =
-          timelineCanvasSizeRef.current;
+      const drawStaticTimeline = () => {
+        const canvas = staticCanvasRef.current;
+        const { width: cssWidth, height: cssHeight } = staticCanvasSizeRef.current;
 
         if (!canvas || !cssWidth || !cssHeight) return;
 
@@ -377,40 +378,16 @@ export default function ChordRecognition() {
           });
         }
 
-        const playheadX = scrollLeft;
-        const playheadRadius = 8;
-        ctx.strokeStyle = "#ff3b30";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(playheadX + 0.5, 0);
-        ctx.lineTo(playheadX + 0.5, cssHeight);
-        ctx.stroke();
-
-        if (playheadX >= -playheadRadius && playheadX <= cssWidth + playheadRadius) {
-          ctx.fillStyle = "#ff3b30";
-          ctx.beginPath();
-          ctx.arc(playheadX, playheadRadius, playheadRadius, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.arc(
-            playheadX,
-            cssHeight - playheadRadius,
-            playheadRadius,
-            0,
-            Math.PI * 2,
-          );
-          ctx.fill();
-        }
       };
 
-      if (timelineCanvasRef.current) {
-        drawTimeline();
+      if (staticCanvasRef.current) {
+        drawStaticTimeline();
         return;
       }
 
       const query = Taro.createSelectorQuery();
       query
-        .select("#timeline-canvas")
+        .select("#timeline-static-canvas")
         .fields({ node: true, size: true })
         .exec((res) => {
           const canvasInfo = res?.[0];
@@ -427,15 +404,86 @@ export default function ChordRecognition() {
           canvas.height = cssHeight * dpr;
           ctx.scale(dpr, dpr);
 
-          timelineCanvasRef.current = canvas;
-          timelineCanvasSizeRef.current = { width: cssWidth, height: cssHeight };
+          staticCanvasRef.current = canvas;
+          staticCanvasSizeRef.current = { width: cssWidth, height: cssHeight };
 
-          drawTimeline();
+          drawStaticTimeline();
         });
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [chords, waveform, screenWidth, scrollLeft]);
+  }, [chords, waveform, screenWidth]);
+
+  useEffect(() => {
+    if (!chords.length) return;
+
+    const timer = setTimeout(() => {
+      const drawPlayhead = () => {
+        const canvas = playheadCanvasRef.current;
+        const { width: cssWidth, height: cssHeight } = playheadCanvasSizeRef.current;
+
+        if (!canvas || !cssWidth || !cssHeight) return;
+
+        const ctx = canvas.getContext("2d");
+        const playheadRadius = 8;
+        const centerX = cssWidth / 2;
+
+        ctx.clearRect(0, 0, cssWidth, cssHeight);
+        ctx.strokeStyle = "#ff3b30";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX + 0.5, 0);
+        ctx.lineTo(centerX + 0.5, cssHeight);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ff3b30";
+        ctx.beginPath();
+        ctx.arc(centerX, playheadRadius, playheadRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(
+          centerX,
+          cssHeight - playheadRadius,
+          playheadRadius,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+      };
+
+      if (playheadCanvasRef.current) {
+        drawPlayhead();
+        return;
+      }
+
+      const query = Taro.createSelectorQuery();
+      query
+        .select("#timeline-playhead-canvas")
+        .fields({ node: true, size: true })
+        .exec((res) => {
+          const canvasInfo = res?.[0];
+          const canvas = canvasInfo?.node;
+          const cssWidth = canvasInfo?.width;
+          const cssHeight = canvasInfo?.height;
+
+          if (!canvas || !cssWidth || !cssHeight) return;
+
+          const ctx = canvas.getContext("2d");
+          const dpr = Taro.getSystemInfoSync().pixelRatio || 1;
+
+          canvas.width = cssWidth * dpr;
+          canvas.height = cssHeight * dpr;
+          ctx.scale(dpr, dpr);
+
+          playheadCanvasRef.current = canvas;
+          playheadCanvasSizeRef.current = { width: cssWidth, height: cssHeight };
+
+          drawPlayhead();
+        });
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [chords, screenWidth]);
 
   // Calculate the total duration from the last chord's end time
   const totalDuration = chords.length > 0 ? chords[chords.length - 1].end : 1;
@@ -443,9 +491,14 @@ export default function ChordRecognition() {
   const editorHeight = (EDITOR_HEIGHT_RPX * screenWidth) / 750;
 
   useEffect(() => {
-    timelineCanvasRef.current = null;
-    timelineCanvasSizeRef.current = { width: 0, height: 0 };
+    staticCanvasRef.current = null;
+    staticCanvasSizeRef.current = { width: 0, height: 0 };
   }, [timelineWidth, editorHeight]);
+
+  useEffect(() => {
+    playheadCanvasRef.current = null;
+    playheadCanvasSizeRef.current = { width: 0, height: 0 };
+  }, [editorHeight]);
 
   return (
     <View className="chord-page">
@@ -505,7 +558,7 @@ export default function ChordRecognition() {
                 }}
               >
                 <Canvas
-                  id="timeline-canvas"
+                  id="timeline-static-canvas"
                   type="2d"
                   className="timeline-canvas"
                   style={{
@@ -515,6 +568,16 @@ export default function ChordRecognition() {
                 />
               </View>
             </ScrollView>
+            <View className="playhead-overlay">
+              <Canvas
+                id="timeline-playhead-canvas"
+                type="2d"
+                className="playhead-canvas"
+                style={{
+                  height: `${editorHeight}px`,
+                }}
+              />
+            </View>
           </View>
         )}
       </View>

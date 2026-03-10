@@ -102,6 +102,23 @@
   display: block;
 }
 
+.playhead-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 24rpx;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.playhead-canvas {
+  display: block;
+  width: 24rpx;
+  height: 100%;
+}
+
 .chord-list {
   max-height: 400rpx;
   overflow-y: auto;
