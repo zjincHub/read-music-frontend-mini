@@ -1,131 +1,185 @@
+@import "../../styles/theme.scss";
+
 .chord-page {
-  background-color: #121212;
-  min-height: 100vh;
-  color: #ffffff;
-  padding: 20rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-}
+  @extend .base-page;
 
-.container {
-  width: 100%;
-  background-color: #1e1e1e;
-  padding: 30rpx;
-  border-radius: 12rpx;
-  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.5);
-  box-sizing: border-box;
-}
-
-.title {
-  display: block;
-  text-align: center;
-  margin-bottom: 30rpx;
-  color: #4caf50;
-  font-size: 36rpx;
-  font-weight: bold;
-}
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-  margin-bottom: 30rpx;
-}
-
-.btn {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  font-size: 30rpx;
-  text-align: center;
-  border-radius: 12rpx;
-  padding: 20rpx 0;
-  line-height: inherit;
-
-  &.recording {
-    background-color: #d32f2f;
+  .chord-container {
+    @extend .base-container;
   }
-  &.analyze {
-    background-color: #1976d2;
-  }
-  &.original {
-    background-color: #8e44ad;
-  }
-  &.accomp {
-    background-color: #f39c12;
-  }
-  &[disabled] {
-    background-color: #555 !important;
-    color: #888 !important;
-  }
-}
 
-.status-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20rpx;
-  min-height: 40rpx;
+  .title {
+    display: block;
+    text-align: center;
+    margin-bottom: 60rpx;
+    color: $primary;
+    font-size: 40rpx;
+    font-weight: 800;
+    letter-spacing: 2rpx;
+    text-shadow: 0 0 20rpx rgba($primary, 0.4);
+  }
+
+  .recorder-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 80rpx;
+    position: relative;
+  }
+
+  .record-btn-wrapper {
+    position: relative;
+    width: 240rpx;
+    height: 240rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40rpx;
+
+    .pulse-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: $recording;
+      opacity: 0;
+      pointer-events: none;
+
+      &.active {
+        animation: pulse 1.5s infinite ease-out;
+      }
+    }
+  }
+
+  .btn {
+    border-radius: 50%;
+    width: 160rpx;
+    height: 160rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28rpx;
+    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 40rpx rgba(0, 0, 0, 0.3);
+    border: none;
+    background-color: $accent;
+    color: #000;
+    z-index: 2;
+    padding: 0;
+    line-height: normal;
+
+    &::after { border: none; }
+
+    &.recording {
+      background-color: $recording;
+      color: #fff;
+      transform: scale(0.9);
+      box-shadow: 0 0 60rpx rgba($recording, 0.6);
+    }
+
+    &.analyze {
+      border-radius: 40rpx;
+      width: 320rpx;
+      height: 90rpx;
+      background: linear-gradient(135deg, $primary, #3b82f6);
+      color: #fff;
+      margin-top: 20rpx;
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+      filter: grayscale(1);
+    }
+  }
 
   .status-text {
-    font-size: 26rpx;
-    color: #aaaaaa;
+    font-size: 28rpx;
+    color: $text-secondary;
     text-align: center;
-    word-wrap: break-word;
+    margin-top: 20rpx;
+    height: 40rpx;
+    transition: color 0.3s;
+
+    &.active {
+      color: $accent;
+    }
   }
 
-  .loader {
-    border: 4rpx solid #333;
-    border-top: 4rpx solid #4caf50;
-    border-radius: 50%;
-    width: 32rpx;
-    height: 32rpx;
-    margin-right: 12rpx;
+  .history-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .section-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    margin-bottom: 30rpx;
+    color: #fff;
+    border-left: 8rpx solid $primary;
+    padding-left: 20rpx;
+  }
+
+  .history-list {
+    flex: 1;
+    max-height: 500rpx;
+  }
+
+  .history-item {
+    background-color: $card-bg;
+    padding: 30rpx;
+    border-radius: 24rpx;
+    margin-bottom: 24rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, background-color 0.2s;
+    border: 1rpx solid rgba(255, 255, 255, 0.05);
+
+    &:active {
+      transform: scale(0.98);
+      background-color: lighten($card-bg, 5%);
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10rpx;
+    }
+
+    .item-name {
+      font-size: 30rpx;
+      font-weight: 600;
+      color: #f1f5f9;
+      max-width: 400rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-date {
+      font-size: 22rpx;
+      color: $text-secondary;
+    }
+
+    .item-status {
+      font-size: 24rpx;
+      padding: 8rpx 20rpx;
+      border-radius: 100rpx;
+      background-color: rgba(255, 255, 255, 0.05);
+
+      &.success { color: $accent; background-color: rgba($accent, 0.1); }
+      &.pending, &.processing { color: $primary; background-color: rgba($primary, 0.1); }
+      &.failed { color: $recording; background-color: rgba($recording, 0.1); }
+    }
+  }
+
+  .empty-text {
+    text-align: center;
+    color: $text-secondary;
+    padding: 100rpx 0;
+    font-size: 26rpx;
   }
 }
 
-/* 时间轴编辑区 */
-.editor-container {
-  position: relative;
-  width: 100%;
-  background-color: #000;
-  border-radius: 12rpx;
-  overflow: hidden;
-  margin-top: 20rpx;
-  margin-bottom: 30rpx;
-  height: 500rpx; /* 波形区和和弦区的总高度 */
-}
 
-.tracks-scroll-view {
-  width: 100%;
-  height: 500rpx;
-  box-sizing: border-box;
-}
-
-.tracks-content {
-  position: relative;
-  height: 100%;
-}
-
-.timeline-canvas {
-  display: block;
-}
-
-.playhead-overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 24rpx;
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.playhead-canvas {
-  display: block;
-  width: 24rpx;
-  height: 100%;
-}

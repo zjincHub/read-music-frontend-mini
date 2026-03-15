@@ -6,7 +6,7 @@ import TimelineEditor from "../chord/components/TimelineEditor";
 import { PX_PER_SEC } from "../chord/constants";
 import type { TaskDetail } from "../chord/types";
 import { getEditorHeight, getTimelineWidth } from "../chord/utils";
-import "../chord/index.scss";
+import "./index.scss";
 
 export default function ChordDetail() {
   const router = useRouter();
@@ -137,7 +137,7 @@ export default function ChordDetail() {
 
   if (!detail)
     return (
-      <View className="chord-page">
+      <View className="detail-page">
         <Text>详情加载中...</Text>
       </View>
     );
@@ -149,9 +149,9 @@ export default function ChordDetail() {
   const editorHeight = getEditorHeight(screenWidth);
 
   return (
-    <View className="chord-page">
-      <View className="container">
-        <Text className="title">🎵 和弦分析详情</Text>
+    <View className="detail-page">
+      <View className="detail-container">
+        <Text className="title">CHORD DETAIL</Text>
         <Text className="subtitle">{detail.filename}</Text>
 
         <View className="controls">
@@ -179,7 +179,19 @@ export default function ChordDetail() {
             onTouchEnd={handleTimelineTouchEnd}
           />
         )}
+
+        <View className="chord-list">
+          {detail.chords?.map((chord, idx) => (
+            <View key={idx} className="chord-list-item">
+              <Text className="chord-list-name">{chord.chord}</Text>
+              <Text className="chord-list-time">
+                [{chord.start}s - {chord.end}s]
+              </Text>
+            </View>
+          ))}
+        </View>
       </View>
     </View>
   );
 }
+

@@ -1,0 +1,40 @@
+// 全局主题变量与基础样式
+
+// 颜色变量
+$bg-dark: #0f111a;
+$card-bg: #1a1d2e;
+$primary: #00f2ff;     // 科技蓝
+$accent: #00ff88;      // 活力绿
+$recording: #ff3b30;    // 录制红
+$text-main: #e0e6ed;
+$text-secondary: #94a3b8;
+
+// 动画
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.3; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
+  100% { transform: translateY(0); }
+}
+
+// 基础页面布局 (通用)
+.base-page {
+  background-color: $bg-dark;
+  min-height: 100vh;
+  color: $text-main;
+  padding: 40rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.base-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,128 @@
+@import "../../styles/theme.scss";
+
+.detail-page {
+  @extend .base-page;
+
+  .detail-container {
+    @extend .base-container;
+  }
+
+  .subtitle {
+    font-size: 28rpx;
+    color: $text-secondary;
+    text-align: center;
+    margin-top: -40rpx;
+    margin-bottom: 40rpx;
+    display: block;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+    margin-bottom: 60rpx;
+    width: 100%;
+  }
+
+  .btn {
+    border-radius: 40rpx;
+    height: 90rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #fff;
+    transition: all 0.2s;
+    border: none;
+    line-height: normal;
+
+    &::after { border: none; }
+
+    &.original {
+      background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      box-shadow: 0 4rpx 20rpx rgba(#8e44ad, 0.3);
+    }
+
+    &.accomp {
+      background: linear-gradient(135deg, #f39c12, #f1c40f);
+      box-shadow: 0 4rpx 20rpx rgba(#f39c12, 0.3);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      filter: brightness(1.1);
+    }
+  }
+
+  // 这里的样式原本是从 chord 页面复用的，现在显式定义在详情页
+  .editor-container {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+    border-radius: 24rpx;
+    overflow: hidden;
+    margin-top: 20rpx;
+    margin-bottom: 40rpx;
+    border: 1rpx solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tracks-scroll-view {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .tracks-content {
+    position: relative;
+    height: 100%;
+  }
+
+  .timeline-canvas {
+    display: block;
+  }
+
+  .playhead-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 24rpx;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .playhead-canvas {
+    display: block;
+    width: 24rpx;
+    height: 100%;
+  }
+
+  .chord-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+    margin-top: 40rpx;
+
+    .chord-list-item {
+      background-color: $card-bg;
+      padding: 24rpx 30rpx;
+      border-radius: 16rpx;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1rpx solid rgba(255, 255, 255, 0.05);
+
+      .chord-list-name {
+        font-weight: bold;
+        color: $primary;
+        font-size: 30rpx;
+      }
+
+      .chord-list-time {
+        color: $text-secondary;
+        font-size: 24rpx;
+      }
+    }
+  }
+}

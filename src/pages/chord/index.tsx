@@ -126,16 +126,19 @@ export default function ChordRecognition() {
 
   return (
     <View className="chord-page">
-      <View className="container">
-        <Text className="title">🎵 AI 和弦识别项目</Text>
+      <View className="chord-container">
+        <Text className="title">CHORD AI</Text>
 
         <View className="recorder-section">
-          <Button
-            className={`btn ${isRecording ? "recording" : ""}`}
-            onClick={startRecord}
-          >
-            {isRecording ? "停止录制" : "开始录音"}
-          </Button>
+          <View className="record-btn-wrapper">
+            <View className={`pulse-ring ${isRecording ? "active" : ""}`} />
+            <Button
+              className={`btn ${isRecording ? "recording" : ""}`}
+              onClick={startRecord}
+            >
+              {isRecording ? "停止" : "录音"}
+            </Button>
+          </View>
 
           {audioUrl && !isRecording && (
             <Button
@@ -146,11 +149,13 @@ export default function ChordRecognition() {
               提交分析任务
             </Button>
           )}
-          <Text className="status-text">{status}</Text>
+          <Text className={`status-text ${isRecording ? "active" : ""}`}>
+            {status}
+          </Text>
         </View>
 
         <View className="history-section">
-          <Text className="section-title">分简历史记录</Text>
+          <Text className="section-title">识别历史</Text>
           <ScrollView scrollY className="history-list">
             {history.map((item) => (
               <View
