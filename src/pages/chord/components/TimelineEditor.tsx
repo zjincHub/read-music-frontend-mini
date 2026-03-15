@@ -8,9 +8,9 @@ import {
   PX_PER_SEC,
   WAVE_BAR_COLOR,
   WAVE_BASELINE_COLOR,
-} from "./constants";
-import type { ChordSegment } from "./types";
-import { getChordColor, getChordTrackHeight } from "./utils";
+} from "../constants";
+import type { ChordSegment } from "../types";
+import { getChordColor, getChordTrackHeight } from "../utils";
 
 interface TimelineEditorProps {
   chords: ChordSegment[];

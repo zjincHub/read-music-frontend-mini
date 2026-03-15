@@ -22,7 +22,7 @@
   display: block;
   text-align: center;
   margin-bottom: 30rpx;
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 36rpx;
   font-weight: bold;
 }
@@ -35,7 +35,7 @@
 }
 
 .btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   font-size: 30rpx;
@@ -44,11 +44,22 @@
   padding: 20rpx 0;
   line-height: inherit;
 
-  &.recording { background-color: #d32f2f; }
-  &.analyze   { background-color: #1976D2; }
-  &.original  { background-color: #8e44ad; }
-  &.accomp    { background-color: #f39c12; }
-  &[disabled] { background-color: #555 !important; color: #888 !important; }
+  &.recording {
+    background-color: #d32f2f;
+  }
+  &.analyze {
+    background-color: #1976d2;
+  }
+  &.original {
+    background-color: #8e44ad;
+  }
+  &.accomp {
+    background-color: #f39c12;
+  }
+  &[disabled] {
+    background-color: #555 !important;
+    color: #888 !important;
+  }
 }
 
 .status-section {
@@ -67,7 +78,7 @@
 
   .loader {
     border: 4rpx solid #333;
-    border-top: 4rpx solid #4CAF50;
+    border-top: 4rpx solid #4caf50;
     border-radius: 50%;
     width: 32rpx;
     height: 32rpx;
@@ -84,7 +95,7 @@
   overflow: hidden;
   margin-top: 20rpx;
   margin-bottom: 30rpx;
-  height: 500rpx;   /* 波形区和和弦区的总高度 */
+  height: 500rpx; /* 波形区和和弦区的总高度 */
 }
 
 .tracks-scroll-view {
@@ -117,20 +128,4 @@
   display: block;
   width: 24rpx;
   height: 100%;
-}
-
-.chord-list {
-  max-height: 400rpx;
-  overflow-y: auto;
-  padding: 0;
-
-  .chord-list-item {
-    padding: 20rpx;
-    border-bottom: 1rpx solid #444;
-    display: flex;
-    justify-content: space-between;
-
-    .chord-list-name { font-weight: bold; color: #b0e0e6; font-size: 28rpx; }
-    .chord-list-time { color: #888; font-size: 24rpx; }
-  }
 }

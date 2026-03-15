@@ -1,354 +1,178 @@
 import { useEffect, useRef, useState } from "react";
-import { View, Text, Button } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import TimelineEditor from "./TimelineEditor";
-import { PX_PER_SEC } from "./constants";
-import type { AnalyzeChordResponse, ChordSegment } from "./types";
-import { getEditorHeight, getTimelineWidth } from "./utils";
+import { View, Text, Button, ScrollView } from "@tarojs/components";
+import Taro, { useDidShow } from "@tarojs/taro";
+import { API_BASE_URL } from "../../config";
+import type { TaskItem } from "./types";
 import "./index.scss";
 
 export default function ChordRecognition() {
   const [status, setStatus] = useState("请录制音频进行识别...");
   const [isRecording, setIsRecording] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [chords, setChords] = useState<ChordSegment[]>([]);
-  const [waveform, setWaveform] = useState<number[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [history, setHistory] = useState<TaskItem[]>([]);
   const [audioUrl, setAudioUrl] = useState("");
-  const [accompUrl, setAccompUrl] = useState("");
-  const [isPlayingAccomp, setIsPlayingAccomp] = useState(false);
-  const [isPlayingOriginal, setIsPlayingOriginal] = useState(false);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [isScrubbing, setIsScrubbing] = useState(false);
-  const [screenWidth, setScreenWidth] = useState(375);
 
-  // 用 ref 保存实时状态，避免高频更新触发依赖循环
-  const isScrubbingRef = useRef(false);
-  const scrollLeftRef = useRef(0);
-  const playbackSyncTimerRef = useRef<ReturnType<typeof setInterval> | null>(
-    null,
-  );
-  const wasPlayingOriginalRef = useRef(false);
-  const wasPlayingAccompRef = useRef(false);
-
-  // 音频上下文
-  const innerAudioContext = useRef<any>(null); // 纯伴奏
-  const originalAudioContext = useRef<any>(null); // 原始录音
   const recorderManager = useRef<any>(null);
+  const pollingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useDidShow(() => {
+    fetchHistory();
+    startPolling();
+  });
 
   useEffect(() => {
-    if (audioUrl && originalAudioContext.current) {
-      originalAudioContext.current.src = audioUrl;
-    }
-  }, [audioUrl]);
-
-  useEffect(() => {
-    if (accompUrl && innerAudioContext.current) {
-      innerAudioContext.current.src = accompUrl;
-    }
-  }, [accompUrl]);
-
-  useEffect(() => {
-    const sysInfo = Taro.getSystemInfoSync();
-    setScreenWidth(sysInfo.windowWidth);
-
-    innerAudioContext.current = Taro.createInnerAudioContext();
-    innerAudioContext.current.onEnded(() => {
-      setIsPlayingAccomp(false);
-    });
-
-    originalAudioContext.current = Taro.createInnerAudioContext();
-    originalAudioContext.current.onEnded(() => {
-      setIsPlayingOriginal(false);
-    });
-
     recorderManager.current = Taro.getRecorderManager();
     recorderManager.current.onStart(() => {
       setIsRecording(true);
-      if (isPlayingOriginal) {
-        originalAudioContext.current.pause();
-        setIsPlayingOriginal(false);
-      }
-      if (isPlayingAccomp) {
-        innerAudioContext.current.pause();
-        setIsPlayingAccomp(false);
-      }
-      setStatus("正在录制... (由于包含人声，分析时将会自动剔除)");
+      setStatus("正在录制...");
     });
-
     recorderManager.current.onStop((res) => {
       setIsRecording(false);
       setStatus("录音已完成。");
       setAudioUrl(res.tempFilePath);
     });
 
-    recorderManager.current.onError((err) => {
-      setIsRecording(false);
-      setStatus("录音失败: " + err.errMsg);
-    });
-
-    return () => {
-      innerAudioContext.current?.destroy();
-      originalAudioContext.current?.destroy();
-      if (playbackSyncTimerRef.current) {
-        clearInterval(playbackSyncTimerRef.current);
-        playbackSyncTimerRef.current = null;
-      }
-    };
+    return () => stopPolling();
   }, []);
 
-  useEffect(() => {
-    const activeAudioContext = isPlayingOriginal
-      ? originalAudioContext.current
-      : isPlayingAccomp
-        ? innerAudioContext.current
-        : null;
-
-    if (playbackSyncTimerRef.current) {
-      clearInterval(playbackSyncTimerRef.current);
-      playbackSyncTimerRef.current = null;
-    }
-
-    if (!activeAudioContext) return;
-
-    playbackSyncTimerRef.current = setInterval(() => {
-      if (isScrubbingRef.current) return;
-      const nextScrollLeft = activeAudioContext.currentTime * PX_PER_SEC;
-      scrollLeftRef.current = nextScrollLeft;
-      setScrollLeft(nextScrollLeft);
-    }, 33);
-
-    return () => {
-      if (playbackSyncTimerRef.current) {
-        clearInterval(playbackSyncTimerRef.current);
-        playbackSyncTimerRef.current = null;
+  const fetchHistory = async () => {
+    try {
+      const res = await Taro.request({
+        url: `${API_BASE_URL}/api/tasks`,
+        method: "GET",
+      });
+      if (res.statusCode === 200) {
+        setHistory(res.data);
+        // Check if polling is needed
+        const hasProcessing = (res.data as TaskItem[]).some(
+          (t) => t.status === "pending" || t.status === "processing",
+        );
+        if (!hasProcessing) stopPolling();
       }
-    };
-  }, [isPlayingOriginal, isPlayingAccomp]);
-
-  const stopAllPlayback = () => {
-    if (isPlayingAccomp) {
-      innerAudioContext.current.stop();
-      setIsPlayingAccomp(false);
+    } catch (err) {
+      console.error("Fetch history failed", err);
     }
-    if (isPlayingOriginal) {
-      originalAudioContext.current.stop();
-      setIsPlayingOriginal(false);
+  };
+
+  const startPolling = () => {
+    if (pollingTimerRef.current) return;
+    pollingTimerRef.current = setInterval(fetchHistory, 5000);
+  };
+
+  const stopPolling = () => {
+    if (pollingTimerRef.current) {
+      clearInterval(pollingTimerRef.current);
+      pollingTimerRef.current = null;
     }
   };
 
   const startRecord = () => {
     if (isRecording) {
       recorderManager.current.stop();
-      return;
+    } else {
+      recorderManager.current.start({
+        duration: 60000,
+        sampleRate: 44100,
+        numberOfChannels: 1,
+        encodeBitRate: 192000,
+        format: "wav",
+      });
     }
-
-    // 调用 start 时会触发录音权限申请
-    recorderManager.current.start({
-      duration: 60000,
-      sampleRate: 44100,
-      numberOfChannels: 1,
-      encodeBitRate: 192000,
-      format: "wav",
-    });
   };
 
-  const analyzeAudio = () => {
-    if (!audioUrl) {
-      Taro.showToast({ title: "请先录制音频", icon: "none" });
-      return;
-    }
-
-    setIsLoading(true);
-    setStatus("正在使用 Demucs 剥离人声并分析色谱图 (约需数十秒)...");
-    setChords([]);
-    setWaveform([]);
-    setAccompUrl("");
-    stopAllPlayback();
-
-    // 生产环境需要替换为真实后端地址
-    const backendUrl = "http://127.0.0.1:8000/api/analyze-chords";
-
+  const submitTask = () => {
+    if (!audioUrl) return;
+    setIsSubmitting(true);
     Taro.uploadFile({
-      url: backendUrl,
+      url: `${API_BASE_URL}/api/analyze-chords`,
       filePath: audioUrl,
       name: "file",
       success: (res) => {
-        try {
-          const data = JSON.parse(res.data) as AnalyzeChordResponse;
-          if (data.status === "success") {
-            setChords(data.data);
-            setWaveform(data.waveform_data ?? []);
-            setStatus("人声分离及和弦分析完成！");
-
-            if (data.accompaniment_url) {
-              // 开发环境把 localhost 替换成 127.0.0.1，减少调试兼容问题
-              setAccompUrl(
-                data.accompaniment_url.replace("localhost", "127.0.0.1"),
-              );
-            }
-            return;
-          }
-
-          setStatus("分析失败: " + data.message);
-        } catch {
-          setStatus("解析响应失败");
+        const data = JSON.parse(res.data);
+        if (data.status === "success") {
+          Taro.showToast({ title: "任务已提交", icon: "success" });
+          setAudioUrl("");
+          fetchHistory();
+          startPolling();
+        } else {
+          Taro.showToast({ title: data.message || "提交失败", icon: "none" });
         }
       },
       fail: (err) => {
-        setStatus(
-          "请求失败: " +
-            err.errMsg +
-            "。确保手机与电脑在同一局域网并正确配置 API IP。",
-        );
+        Taro.showToast({ title: "网络请求失败", icon: "none" });
       },
-      complete: () => {
-        setIsLoading(false);
-      },
+      complete: () => setIsSubmitting(false),
     });
   };
 
-  const togglePlayOriginal = () => {
-    if (!audioUrl) return;
-
-    if (isPlayingOriginal) {
-      originalAudioContext.current.pause();
-      setIsPlayingOriginal(false);
-      return;
-    }
-
-    if (isPlayingAccomp) {
-      innerAudioContext.current.pause();
-      setIsPlayingAccomp(false);
-    }
-    originalAudioContext.current.play();
-    setIsPlayingOriginal(true);
+  const goToDetail = (id: string) => {
+    Taro.navigateTo({ url: `/pages/detail/index?id=${id}` });
   };
 
-  const togglePlayAccomp = () => {
-    if (!accompUrl) return;
-
-    if (isPlayingAccomp) {
-      innerAudioContext.current.pause();
-      setIsPlayingAccomp(false);
-      return;
-    }
-
-    if (isPlayingOriginal) {
-      originalAudioContext.current.pause();
-      setIsPlayingOriginal(false);
-    }
-    innerAudioContext.current.play();
-    setIsPlayingAccomp(true);
-  };
-
-  const handleTimelineScroll = (event: any) => {
-    scrollLeftRef.current = event.detail.scrollLeft;
-    if (isScrubbing) {
-      setScrollLeft(event.detail.scrollLeft);
+  const getStatusText = (_status: string) => {
+    switch (_status) {
+      case "pending":
+        return "⏳ 排队中";
+      case "processing":
+        return "⚙️ 处理中";
+      case "success":
+        return "✅ 已完成";
+      case "failed":
+        return "❌ 失败";
+      default:
+        return _status;
     }
   };
-
-  const handleTimelineTouchStart = () => {
-    wasPlayingOriginalRef.current = isPlayingOriginal;
-    wasPlayingAccompRef.current = isPlayingAccomp;
-    setIsScrubbing(true);
-    isScrubbingRef.current = true;
-
-    if (isPlayingOriginal) {
-      originalAudioContext.current.pause();
-    }
-    if (isPlayingAccomp) {
-      innerAudioContext.current.pause();
-    }
-  };
-
-  const handleTimelineTouchEnd = () => {
-    setIsScrubbing(false);
-    isScrubbingRef.current = false;
-    const targetTime = scrollLeftRef.current / PX_PER_SEC;
-
-    if (targetTime < 0) return;
-
-    if (audioUrl) {
-      originalAudioContext.current.seek(targetTime);
-    }
-    if (accompUrl) {
-      innerAudioContext.current.seek(targetTime);
-    }
-
-    if (wasPlayingOriginalRef.current) {
-      setTimeout(() => originalAudioContext.current.play(), 16);
-    } else if (wasPlayingAccompRef.current) {
-      setTimeout(() => innerAudioContext.current.play(), 16);
-    }
-  };
-
-  const timelineWidth = getTimelineWidth(chords, waveform);
-  const editorHeight = getEditorHeight(screenWidth);
 
   return (
     <View className="chord-page">
       <View className="container">
-        <Text className="title">🎵 吉他伴奏和弦识别</Text>
+        <Text className="title">🎵 AI 和弦识别项目</Text>
 
-        <View className="controls">
+        <View className="recorder-section">
           <Button
             className={`btn ${isRecording ? "recording" : ""}`}
             onClick={startRecord}
           >
-            {isRecording ? "停止录制 🛑" : "录制音频 (麦克风)"}
-          </Button>
-
-          <Button
-            className="btn analyze"
-            disabled={!audioUrl || isLoading || isRecording}
-            onClick={analyzeAudio}
-          >
-            分析此音频和弦 (自动去人声)
+            {isRecording ? "停止录制" : "开始录音"}
           </Button>
 
           {audioUrl && !isRecording && (
-            <Button className="btn original" onClick={togglePlayOriginal}>
-              {isPlayingOriginal ? "⏸️ 暂停原版录音" : "▶️ 播放原版录音"}
+            <Button
+              className="btn analyze"
+              loading={isSubmitting}
+              onClick={submitTask}
+            >
+              提交分析任务
             </Button>
           )}
-
-          {accompUrl && (
-            <Button className="btn accomp" onClick={togglePlayAccomp}>
-              {isPlayingAccomp ? "⏸️ 暂停纯伴奏" : "🎵 试听纯伴奏"}
-            </Button>
-          )}
-        </View>
-
-        <View className="status-section">
-          {isLoading && <View className="loader"></View>}
           <Text className="status-text">{status}</Text>
         </View>
 
-        {chords.length > 0 && (
-          <TimelineEditor
-            chords={chords}
-            waveform={waveform}
-            screenWidth={screenWidth}
-            scrollLeft={scrollLeft}
-            timelineWidth={timelineWidth}
-            editorHeight={editorHeight}
-            isScrubbing={isScrubbing}
-            onScroll={handleTimelineScroll}
-            onTouchStart={handleTimelineTouchStart}
-            onTouchEnd={handleTimelineTouchEnd}
-          />
-        )}
-
-        <View className="chord-list">
-          {chords.map((chord, idx) => (
-            <View key={idx} className="chord-list-item">
-              <Text className="chord-list-name">{chord.chord}</Text>
-              <Text className="chord-list-time">
-                [{chord.start}s - {chord.end}s]
-              </Text>
-            </View>
-          ))}
+        <View className="history-section">
+          <Text className="section-title">分简历史记录</Text>
+          <ScrollView scrollY className="history-list">
+            {history.map((item) => (
+              <View
+                key={item.id}
+                className="history-item"
+                onClick={() => item.status === "success" && goToDetail(item.id)}
+              >
+                <View className="item-info">
+                  <Text className="item-name">{item.filename}</Text>
+                  <Text className="item-date">
+                    {new Date(item.created_at).toLocaleString()}
+                  </Text>
+                </View>
+                <Text className={`item-status ${item.status}`}>
+                  {getStatusText(item.status)}
+                </Text>
+              </View>
+            ))}
+            {history.length === 0 && (
+              <Text className="empty-text">计划暂无记录</Text>
+            )}
+          </ScrollView>
         </View>
       </View>
     </View>
